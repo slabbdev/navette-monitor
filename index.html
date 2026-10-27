@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The check Checkly can't run — navette</title>
+<meta name="description" content="Synthetic monitoring that walks past bot walls. A real browser engine with a real session, not headless Chromium calling from a datacenter. Live evidence, re-runnable.">
+<style>
+  :root{
+    --bg:#0b0e14; --panel:#11151f; --panel2:#0e1219; --line:#1f2735;
+    --text:#dbe2ee; --dim:#8b96a8; --green:#3ddc84; --red:#ff5c69; --amber:#ffc555;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  a{color:#7ab3ff;text-decoration:none} a:hover{text-decoration:underline}
+  code,pre{font-family:var(--mono);font-size:13px}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 24px}
+  header{padding:72px 0 40px;border-bottom:1px solid var(--line)}
+  .kicker{font-family:var(--mono);color:var(--amber);letter-spacing:.12em;font-size:12px;text-transform:uppercase}
+  h1{font-size:clamp(30px,5vw,52px);line-height:1.08;margin:.35em 0 .4em;font-weight:800;letter-spacing:-.02em}
+  h1 .strike{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:4px}
+  .sub{color:var(--dim);font-size:19px;max-width:720px}
+  .meta{font-family:var(--mono);font-size:12px;color:var(--dim);margin-top:22px}
+  .meta b{color:var(--text);font-weight:600}
+  section{padding:44px 0;border-bottom:1px solid var(--line)}
+  h2{font-size:24px;margin:0 0 6px;letter-spacing:-.01em}
+  .lede{color:var(--dim);margin:0 0 26px;max-width:760px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:860px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 18px 14px}
+  .card h3{margin:0 0 4px;font-size:15px;display:flex;align-items:center;gap:10px}
+  .chip{font-family:var(--mono);font-size:11px;padding:2px 9px;border-radius:20px;font-weight:700;letter-spacing:.06em}
+  .pass{background:rgba(61,220,132,.12);color:var(--green);border:1px solid rgba(61,220,132,.4)}
+  .fail{background:rgba(255,92,105,.12);color:var(--red);border:1px solid rgba(255,92,105,.4)}
+  .note{color:var(--dim);font-size:13px;margin:0 0 12px}
+  pre{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:12px 14px;overflow-x:auto;margin:0 0 10px;line-height:1.5}
+  pre .c{color:#5d6b80} pre .g{color:var(--green)} pre .r{color:var(--red)} pre .y{color:var(--amber)}
+  .verdict{font-family:var(--mono);font-size:13px;font-weight:700}
+  .verdict.r{color:var(--red)} .verdict.g{color:var(--green)}
+  img.shot{width:100%;border:1px solid var(--line);border-radius:8px;margin-top:10px;display:block}
+  .cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media(max-width:860px){.cards3{grid-template-columns:1fr}}
+  .why{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px}
+  .why h3{margin:0 0 8px;font-size:16px}
+  .why p{color:var(--dim);font-size:14px;margin:0}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--dim);font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-family:var(--mono)}
+  td.y{color:var(--green)} td.n{color:var(--red)} td.m{color:var(--amber)}
+  .foot-note{font-size:13px;color:var(--dim);max-width:760px}
+  footer{padding:36px 0 60px;color:var(--dim);font-size:13px}
+  .pill-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .pill{font-family:var(--mono);font-size:12px;color:var(--dim);border:1px solid var(--line);border-radius:20px;padding:4px 12px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="kicker">navette · monitoring</div>
+    <h1>The check <span class="strike">Checkly</span> can't&nbsp;run.</h1>
+    <p class="sub">Synthetic monitoring that walks past bot walls — because it's a real browser engine
+    in a real, logged-in session. Not headless Chromium calling from a datacenter.</p>
+    <div class="pill-row">
+      <span class="pill">target: vinted.fr (Cloudflare challenge + DataDome)</span>
+      <span class="pill">evidence: 2026-10-27 18:12 UTC</span>
+      <span class="pill">re-runnable: ./check.sh</span>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>One check, two monitors</h2>
+    <p class="lede">The check: <em>"search returns listings on a marketplace that hates bots."</em>
+    Same URL, same minute, from the same machine. The only variable is what the monitor is made of.</p>
+
+    <div class="grid">
+      <div class="card">
+        <h3>An HTTP monitor <span class="chip fail">403 · wall</span></h3>
+        <p class="note">What every uptime checker and cheap synthetic monitor does — a plain HTTP GET.</p>
+<pre>$ curl -s -o /dev/null -w "%{http_code}" \
+    "https://www.vinted.fr/catalog?search_text=nike"
+<span class="r">403</span>
+
+$ curl -sI "https://www.vinted.fr/catalog?search_text=nike"
+HTTP/2 <span class="r">403</span>
+<span class="y">cf-mitigated: challenge</span>
+server: cloudflare</pre>
+        <p class="note">The body says <em>"Enable JavaScript and cookies to continue."</em> It will say
+        that forever. A headless Chromium from a cloud region gets the same treatment — datacenter ASN
+        plus automation fingerprint is exactly what these walls are built to catch. Don't take our word
+        for it: point your current monitoring stack at the URL above and see what comes back.</p>
+        <div class="verdict r">VERDICT: monitor sees a wall. Site "down"? No — monitor is blind.</div>
+      </div>
+
+      <div class="card">
+        <h3>navette <span class="chip pass">200 · listings</span></h3>
+        <p class="note">A daemon running the system WebKit — Safari's real engine, real session, driven over a JSON API.</p>
+<pre>$ curl -s -X POST localhost:8766/navigate -d \
+    '{"url":"https://www.vinted.fr/catalog?search_text=nike"}'
+<span class="y">{ "ok": true, "title": "Un instant…" }</span>   <span class="c"># the wall shows up here too…</span>
+
+<span class="c"># …6 seconds later, same session, still a real browser:</span>
+$ curl -s -X POST localhost:8766/evaluate -d @assert.js
+<span class="g">{ "title": "Articles | Vinted",
+    "cards": 1358,
+    "results": "500+ resultats",
+    "firstItem": "/items/10556258641-leggings-nike-pro" }</span></pre>
+        <img class="shot" src="assets/vinted-check-pass.png" alt="navette WebKit rendering the vinted.fr catalog search results page after clearing the challenge" width="1400" height="875">
+        <div class="verdict g">VERDICT: check passes — 1,358 listing cards asserted, countable, monitorable.</div>
+      </div>
+    </div>
+
+    <p class="note" style="margin-top:18px">Note what actually happened: the wall appeared to navette too.
+    The difference isn't magic IPs — it's that navette <em>is</em> a real browser, so the challenge
+    clears itself and the check proceeds. Your monitor becomes indistinguishable from a user, because
+    engine-wise, it is one.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Why it gets through</h2>
+    <div class="cards3">
+      <div class="why">
+        <h3>Real engine, no automation tells</h3>
+        <p>navette sessions are the OS WebKit — the same engine a human Safari user has. No headless
+        Chromium, no CDP port, no <code>navigator.webdriver</code>. Bot walls fingerprint browsers for
+        a living; there's nothing to fingerprint here that isn't already on millions of laptops.</p>
+      </div>
+      <div class="why">
+        <h3>Sessions that stay logged in</h3>
+        <p>A human logs in once — 2FA and consent screens happen in a real window via
+        <code>sessions/show</code>. The cookie jar lives in the OS keychain and is reloaded on every
+        check. Monitor what a <em>logged-in customer</em> sees: their prices, their feed, their
+        "your listing is live" page. <code>storageState</code> gymnastics not required.</p>
+      </div>
+      <div class="why">
+        <h3>Works from datacenters too</h3>
+        <p>Cookie-seeded navette scouts have run green on free GitHub Actions runners (Azure IPs) —
+        20/20 packs including bot-walled marketplaces. See
+        <a href="https://github.com/slabbdev/starflotte">starflotte</a>: the fleet evidence is public,
+        in CI logs, re-runnable.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>What we are honest about</h2>
+    <p class="lede">Checkly is a good product. If what you monitor is your own API or your own app,
+    much of this table says <em>use them</em>. This page exists for the other column: the targets
+    that treat every visitor as a suspect.</p>
+    <table>
+      <tr><th></th><th>Checkly</th><th>navette</th></tr>
+      <tr><td>Runs from 22 AWS regions out of the box</td><td class="y">yes</td><td class="m">bring your own fleet (Mac, VPS, CI runners)</td></tr>
+      <tr><td>SOC 2, SLA, status pages, alert routing</td><td class="y">yes</td><td class="n">your cron + webhook (for now)</td></tr>
+      <tr><td>Playwright test compatibility</td><td class="y">native</td><td class="n">deliberately not — plain JSON steps over HTTP</td></tr>
+      <tr><td>Trace/video artifacts per run</td><td class="y">yes</td><td class="m">screenshots + DOM asserts</td></tr>
+      <tr><td>Passes Cloudflare / DataDome challenges</td><td class="n">no — headless Chromium from datacenter ASNs</td><td class="y">yes, as shown above</td></tr>
+      <tr><td>Monitors a logged-in, bot-walled session</td><td class="n">fragile at best</td><td class="y">the core design</td></tr>
+      <tr><td>Human handoff for 2FA / consent inside a check</td><td class="n">no</td><td class="y">sessions/show, then hide</td></tr>
+      <tr><td>Pilotable by an LLM agent, zero SDK</td><td class="m">via MCP / skills layer</td><td class="y">it <em>is</em> an HTTP JSON API</td></tr>
+    </table>
+    <p class="foot-note" style="margin-top:16px">Checkly's execution model (per their docs, 2026-10-27):
+    browser checks "start a real browser instance (Chromium or Chrome)" from their public AWS locations,
+    on a schedule, from 10 minutes down to 10 seconds. That model is excellent for your own app and
+    structurally blind behind bot walls. Both things are true at once.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Run it yourself</h2>
+    <p class="lede">Everything on this page is two curl commands against a daemon. No SDK, no account,
+    no credit card. Clone this repo and:</p>
+<pre><span class="c"># 1. a daemon (macOS: `navette serve --port 8766`; Linux: WebKitGTK image on GHCR, see the navette repo)</span>
+
+<span class="c"># 2. the naive monitor — watch it hit the wall</span>
+$ curl -s -o /dev/null -w "%{http_code}\n" "https://www.vinted.fr/catalog?search_text=nike"
+
+<span class="c"># 3. the navette check — watch it pass</span>
+$ ./check.sh https://www.vinted.fr/catalog?search_text=nike
+
+<span class="c"># or by hand:</span>
+$ curl -s -X POST localhost:8766/navigate \
+    -d '{"url":"https://www.vinted.fr/catalog?search_text=nike"}'
+$ curl -s -X POST localhost:8766/read      <span class="c"># after a few seconds</span></pre>
+    <p class="foot-note"><code>check.sh</code> in this repo is the actual script that produced the
+    evidence on this page. Monitor definitions at navette are plain markdown recipes
+    (<a href="https://github.com/slabbdev/navette">sites/ corpus</a>) — flows and selectors verified
+    live, versioned in git, executable by a daemon or an agent.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Independent comparison page by the <a href="https://github.com/slabbdev/navette">navette</a> project.
+    Not affiliated with, or endorsed by, Checkly, Cloudflare, DataDome or Vinted — all names are their
+    owners'. All evidence captured <b>2026-10-27 18:12 UTC</b> and reproducible via <code>check.sh</code>;
+    bot walls vary, which is rather the point.</p>
+  </div>
+</footer>
+
+</body>
+</html>
